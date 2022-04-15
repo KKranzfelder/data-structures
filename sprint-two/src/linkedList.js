@@ -4,32 +4,15 @@ var LinkedList = function () {
   list.tail = null;
 
   list.addToTail = function (value) {
-    var traverse = function (currentNode) {
-      if (currentNode.next === null) {
-        list.tail = Node(value);
-        currentNode.next = Node(value);
-      } else {
-        traverse(currentNode.next);
-      }
-    };
-    //base case
-    if (list.head === null) {
-      list.head = Node(value);
+    var newNode = Node(value);
+
+    if (this.head === null) {
+      this.head = newNode;
+      this.tail = newNode;
     } else {
-
-      //if head is not null, meaning our linkedList has an unknown number of nodes
-      //check the "next" value of each node until we find a "next" key that is equal to null
-      //if next is null
-      //set next value to Node(value)
-      if (this.head.next === null) {
-        this.head.next = Node(value);
-        list.tail = Node(value);
-      } else {
-        traverse(this.head);
-      }
-
+      this.tail.next = newNode;
+      this.tail = newNode;
     }
-    list.tail = Node(value);
   };
 
   list.removeHead = function () {
@@ -40,6 +23,20 @@ var LinkedList = function () {
 
   list.contains = function (target) {
 
+    var hasValue = false;
+    var traverse = function (currentNode) {
+      if (currentNode.value === target) {
+        hasValue = true;
+        return;
+      } else {
+        if (currentNode.next !== null) {
+          traverse(currentNode.next);
+        }
+      }
+    };
+    traverse(this.head);
+
+    return hasValue;
   };
 
   return list;
@@ -56,6 +53,10 @@ var Node = function (value) {
 
 /*
  * Complexity: What is the time complexity of the above functions?
+.removeHead - constant time
+.addToTail -
+constant time
+.contains - linear time
  */
 
 var linkedList = LinkedList();
@@ -63,26 +64,3 @@ linkedList.addToTail(5);
 linkedList.addToTail(4);
 linkedList.addToTail(3);
 linkedList.addToTail(2);
-console.log({linkedList});
-
-
-
-/*
-
-list = {
-
-head: {
-  value: 5
-  next: {
-    value: 4,
-    next: null //adding to linkedlist goes here
-  }
-},
-tail: {
-  value: 4,
-  next: null
-}
-
-}
-
-*/
