@@ -1,6 +1,8 @@
 var BinarySearchTree = function(value) {
   var newBSTree = Object.create(binaryTreeMethods);
-  newBSTree.tree = {};
+  newBSTree.tree = {
+    'value': value
+  };
 
   return newBSTree;
 };
@@ -16,37 +18,60 @@ binaryTreeMethods.right = function () {
 };
 
 binaryTreeMethods.insert = function (value) {
-  if (Object.keys(this.tree).length === 0) {
-    this.tree.value = value;
-    return;
-  }
 
   var adjust = function (curTree) {
-    var insert = {'value': value};
-    if (curTree.value > value) {
-      if (curTree.left !== undefined && value < curTree.left.value) {
-        adjust(curTree.left);
-      } else if (curTree.left === undefined) {
-        curTree.left = insert;
+    // var insert = {'value': value};
+    // if (curTree.value < value) {
+    //   if (curTree.right !== undefined) {
+    //     adjust(curTree.right);
+    //   } else if (curTree.right === undefined) {
+    //     curTree.right = insert;
+    //   } else {
+    //     insert.right = curTree.right;
+    //     curTree.right = insert;
+    //   }
+    // }
+    // if (curTree.value > value) {
+    //   if (curTree.left !== undefined) {
+    //     adjust(curTree.left);
+    //   } else if (curTree.left === undefined) {
+    //     curTree.left = insert;
+    //   } else {
+    //     insert.left = curTree.left;
+    //     curTree.left = insert;
+    //   }
+    // }
+    var curLeft = curTree.left;
+    var curRight = curTree.right;
+    var insert = { 'value': value };
+    if (value > curLeft.value && value < curTree.value) {
+      if (curLeft.right === undefined) {
+        curLeft.right = insert;
       } else {
-        insert.left = curTree.left;
-        curTree.left = insert;
+        adjust(curLeft);
       }
-    }
-    if (curTree.value < value) {
-      if (curTree.right !== undefined && value > curTree.right.value) {
-        adjust(curTree.right);
-      } else if (curTree.right === undefined) {
-        curTree.right = insert;
+    } else if (value < curLeft.value) {
+      if (curLeft.left === undefined) {
+        curLeft.left = insert;
       } else {
-        insert.right = curTree.right;
-        curTree.right = insert;
+        adjust(curLeft.left);
+      }
+    } else if (value > curTree.value && value < curRight.value) {
+      if (curRight.left === undefined) {
+        curRight.left = insert;
+      } else {
+        adjust(curRight);
+      }
+    } else if (value > curRight.value) {
+      if (curRight.right === undefined) {
+        curRight.right = insert;
+      } else {
+        adjust(curRight.right);
       }
     }
   };
 
   adjust(this.tree);
-  console.log(this.tree);
 };
 
 binaryTreeMethods.contains = function (value) {
@@ -77,5 +102,87 @@ BSTree = {
         }
     }
 }
+
+*/
+
+
+/*
+
+binaryTreeMethods.insert = function (value) {
+
+  var adjust = function (curTree) {
+    var insert = {'value': value};
+    if (curTree.value > value) {
+      if (curTree.left !== undefined) {
+        if (value < curTree.left.value) {
+          adjust(curTree.left);
+        } else {
+          if (curTree.right !== undefined) {
+            adust(curTree.right);
+          } else {
+            curTree.right = insert;
+          }
+        }
+      } else if (value > curTree.left && curTree.right === undefined) {
+        curTree.right = insert;
+      } else if (curTree.left === undefined) {
+        curTree.left = insert;
+      } else {
+        insert.left = curTree.left;
+        curTree.left = insert;
+      }
+    }
+    if (curTree.value < value) {
+      if (curTree.right !== undefined) {
+        if (value > curTree.right.value) {
+          adjust(curTree.right);
+        } else {
+          if (curTree.left !== undefined) {
+            adjust(curTree.left);
+          } else {
+            curTree.left = insert;
+          }
+        }
+      } else if (value < curTree.right && curTree.left === undefined) {
+        curTree.left = insert;
+      } else if (curTree.right === undefined) {
+        curTree.right = insert;
+      } else {
+        insert.right = curTree.right;
+        curTree.right = insert;
+      }
+    }
+  };
+
+  adjust(this.tree);
+  console.table(this.tree);
+};
+
+
+
+
+
+if value is between currentValue and left value
+  if currentValue.left is undefined
+    make value the new right of currentValue.left
+  else
+    call adjust on current tree
+if value is less than currentValue.left’s value
+  if currentValue.left.left is undefined
+    make value the new left value of currentValue.left
+  else
+    call adjust on current tree
+
+
+if value is between currentValue and right value
+  if currentValue.left is undefined
+    make value the new left of currentValue.right
+  else
+    call adjust on current tree
+if value is greater than currentValue.right
+  if currentValue.left.left is undefined
+    make value the new right value of currentValue.right
+  else
+    call adjust on current tree
 
 */
