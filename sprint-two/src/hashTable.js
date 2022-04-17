@@ -54,9 +54,19 @@ HashTable.prototype.retrieve = function(k) {
   }
 };
 
-HashTable.prototype.remove = function(k) {
+HashTable.prototype.remove = function (k) {
   var index = getIndexBelowMaxForKey(k, this._limit);
 
+  var bucketArr = this._storage.get(index);
+  if (bucketArr.length === 1) {
+    bucketArr.splice(0, 1);
+  } else {
+    for (var i = 0; i < bucketArr.length; i++) {
+      if (k === bucketArr[i][0]) {
+        bucketArr.splice(i, 1);
+      }
+    }
+  }
 };
 
 
