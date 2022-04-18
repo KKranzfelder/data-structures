@@ -1,86 +1,122 @@
 var BinarySearchTree = function(value) {
   var newBSTree = Object.create(binaryTreeMethods);
-  newBSTree.tree = {
-    'value': value
-  };
+  newBSTree.value = value;
 
   return newBSTree;
 };
 
 var binaryTreeMethods = {};
 
-binaryTreeMethods.left = function () {
-  return this.tree.left;
-};
+// binaryTreeMethods.left = function () {
+//   return this.tree.right;
+// };
 
-binaryTreeMethods.right = function () {
-  return this.tree.right;
-};
+// binaryTreeMethods.right = function () {
+//   return this.tree.right;
+// };
 
 binaryTreeMethods.insert = function (value) {
-
   var adjust = function (curTree) {
-    // var insert = {'value': value};
-    // if (curTree.value < value) {
-    //   if (curTree.right !== undefined) {
-    //     adjust(curTree.right);
-    //   } else if (curTree.right === undefined) {
-    //     curTree.right = insert;
-    //   } else {
-    //     insert.right = curTree.right;
-    //     curTree.right = insert;
-    //   }
-    // }
-    // if (curTree.value > value) {
-    //   if (curTree.left !== undefined) {
-    //     adjust(curTree.left);
-    //   } else if (curTree.left === undefined) {
-    //     curTree.left = insert;
-    //   } else {
-    //     insert.left = curTree.left;
-    //     curTree.left = insert;
-    //   }
-    // }
-    var curLeft = curTree.left;
-    var curRight = curTree.right;
-    var insert = { 'value': value };
-    if (value > curLeft.value && value < curTree.value) {
-      if (curLeft.right === undefined) {
-        curLeft.right = insert;
+    var insert = {};
+    insert.value = value;
+
+    if (value > curTree.value) {
+      //if current tree has a right value and left value, recursively check right tree
+      if (curTree.right !== undefined && curTree.left !== undefined) {
+        adjust(curTree.right);
+        //else if there's a right value and this would also be placed in the next right value,
+        //but no left value is present. Rearrange value so current is now left, right would be
+        //current level and the insert will be the right value
+      } else if (curTree.right !== undefined && value > curTree.right.value) {
+        //create new left tree node using current tree value
+        curTree.left = {'value': curTree.value};
+        //make current tree value equal the right tree value
+        curTree.value = curTree.right.value;
+        //reassign the right tree value to now equal the inserted value
+        curTree.right.value = value;
+        //else if right is present and this would be left, recursively check right tree
+      } else if (curTree.right !== undefined && value < curTree.right.value) {
+        adjust(curTree.right);
+        // right is undefined and we can safely put insert value as right tree
       } else {
-        adjust(curLeft);
+        curTree.right = insert;
       }
-    } else if (value < curLeft.value) {
-      if (curLeft.left === undefined) {
-        curLeft.left = insert;
+    }//same as above but mirrored for lesser than and left
+    if (value < curTree.value) {
+      if (curTree.left !== undefined && curTree.right !== undefined) {
+        adjust(curTree.left);
+      } else if (curTree.left !== undefined && value < curTree.left.value) {
+        curTree.right = {'value': curTree.value};
+        curTree.value = curTree.left.value;
+        curTree.left.value = value;
+      } else if (curTree.left !== undefined && value > curTree.left.value) {
+        adjust(curTree.left);
       } else {
-        adjust(curLeft.left);
-      }
-    } else if (value > curTree.value && value < curRight.value) {
-      if (curRight.left === undefined) {
-        curRight.left = insert;
-      } else {
-        adjust(curRight);
-      }
-    } else if (value > curRight.value) {
-      if (curRight.right === undefined) {
-        curRight.right = insert;
-      } else {
-        adjust(curRight.right);
+        curTree.left = insert;
       }
     }
   };
 
-  adjust(this.tree);
+  adjust(this);
 };
 
 binaryTreeMethods.contains = function (value) {
 
+  var hasValue = false;
+  var climb = function(tree) {
+    if (tree.value === value) {
+      hasValue = true;
+      return;
+    }
+    if (!hasValue && value < tree.value) {
+      if (tree.left !== undefined) {
+        climb(tree.left);
+      }
+    }
+    if (!hasValue && value > tree.value) {
+      if (tree.right !== undefined) {
+        climb(tree.right);
+      }
+    }
+  };
+
+  climb(this);
+
+  return hasValue;
 };
 
 binaryTreeMethods.depthFirstLog = function (cb) {
 
+  var climb = function(tree) {
+
+    cb(tree.value);
+
+    if (tree.left !== undefined) {
+      climb(tree.left);
+    }
+    if (tree.right !== undefined) {
+      climb(tree.right);
+    }
+  };
+
+  climb(this);
 };
+
+// var newTree = BinarySearchTree(5);
+// newTree.insert(2);
+// newTree.insert(3);
+// newTree.insert(7);
+// newTree.insert(6);
+// console.table(newTree);
+// console.log(newTree.left.right.value);//6
+// console.log(newTree.right.left.value);//3
+
+// var anotherNewTree = BinarySearchTree(5);
+// anotherNewTree.insert(8);
+// anotherNewTree.insert(9);
+// anotherNewTree.insert(7);
+// anotherNewTree.insert(6);
+// console.table(anotherNewTree);
 
 /*
  * Complexity: What is the time complexity of the above functions?
@@ -186,3 +222,34 @@ if value is greater than currentValue.right
     call adjust on current tree
 
 */
+
+
+
+// var curLeft = curTree.left;
+// var curRight = curTree.right;
+// var insert = { 'value': value };
+// if (value > curLeft.value && value < curTree.value) {
+//   if (curLeft.right === undefined) {
+//     curLeft.right = insert;
+//   } else {
+//     adjust(curLeft);
+//   }
+// } else if (value < curLeft.value) {
+//   if (curLeft.left === undefined) {
+//     curLeft.left = insert;
+//   } else {
+//     adjust(curLeft.left);
+//   }
+// } else if (value > curTree.value && value < curRight.value) {
+//   if (curRight.left === undefined) {
+//     curRight.left = insert;
+//   } else {
+//     adjust(curRight);
+//   }
+// } else if (value > curRight.value) {
+//   if (curRight.right === undefined) {
+//     curRight.right = insert;
+//   } else {
+//     adjust(curRight.right);
+//   }
+// }
